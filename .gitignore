@@ -1,7 +1,4 @@
-.gradle/
-build/
-app/build/
-.idea/
-*.iml
-local.properties
+.vercel
+node_modules
 .DS_Store
+*.log
