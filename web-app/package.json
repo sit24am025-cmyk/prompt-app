@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "ID Chan Prompt - Turn any image into an exact AI prompt",
   "scripts": {
-    "start": "npx serve ."
+    "build": "echo 'Static site ready'"
   },
   "keywords": [
     "ai",
