@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Chan Prompt - Turn any image into an exact AI prompt</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- LOGIN AUTHENTICATION SCREEN OVERLAY -->
+    <div id="loginScreen" class="login-screen-overlay">
+        <div class="login-card">
+            <div class="login-logo-ring">
+                <img src="logo.jpg" alt="ID Chan Prompt Logo" class="login-logo-img">
+            </div>
+            <h2>ID Chan Prompt</h2>
+            <p class="login-subtitle">Turn any image into an exact AI prompt</p>
+
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <label><i class="fa-solid fa-user"></i> Username</label>
+                    <input type="text" id="loginUsername" placeholder="Enter username" required>
+                </div>
+                <div class="input-group">
+                    <label><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-large btn-full">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                </button>
+                <button type="button" id="demoLoginBtn" class="btn btn-secondary btn-full">
+                    Quick Demo Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- TOP APP BAR -->
+        <header class="top-app-bar">
+            <div class="brand">
+                <img src="logo.jpg" alt="Logo" class="header-logo-img">
+                <div class="brand-text">
+                    <h1>ID Chan Prompt</h1>
+                    <p>Turn any image into an exact AI prompt</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="logoutBtn" class="icon-btn" title="Sign Out"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </header>
+
+        <!-- MAIN VIEW ENGINE -->
+        <main class="main-content">
+            <!-- TAB 1: HOME / UPLOAD & RESULT -->
+            <section id="homeTab" class="tab-content active">
+                <div class="mode-selector-bar">
+                    <span class="mode-label">Analysis Mode:</span>
+                    <div class="mode-chips">
+                        <button class="chip active" data-mode="EXACT_RECREATION">Exact Recreation</button>
+                        <button class="chip" data-mode="PHOTOREALISTIC">Photorealistic</button>
+                        <button class="chip" data-mode="CINEMATIC">Cinematic</button>
+                        <button class="chip" data-mode="DETAILED">Detailed</button>
+                        <button class="chip" data-mode="SHORT">Short</button>
+                    </div>
+                </div>
+
+                <!-- UPLOAD CARD -->
+                <div class="card upload-card" id="uploadCard">
+                    <div class="empty-state" id="emptyState">
+                        <div class="upload-icon-ring">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </div>
+                        <h2>Upload Your Image</h2>
+                        <p>Upload an image and get a detailed prompt to recreate it.</p>
+                        
+                        <div class="upload-btn-row">
+                            <label for="imageFileInput" class="btn btn-primary">
+                                <i class="fa-solid fa-image"></i> Choose Image
+                            </label>
+                            <button id="cameraBtn" class="btn btn-secondary">
+                                <i class="fa-solid fa-camera"></i> Camera
+                            </button>
+                            <input type="file" id="imageFileInput" accept="image/*" style="display:none;">
+                        </div>
+
+                        <!-- SAMPLE IMAGES DEMO SELECTOR -->
+                        <div class="sample-images-section">
+                            <span>Or try sample:</span>
+                            <div class="sample-thumbnails">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt="Portrait Sample" data-sample="portrait">
+                                <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" alt="Landscape Sample" data-sample="landscape">
+                                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80" alt="Cyberpunk Sample" data-sample="cyberpunk">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW STATE -->
+                    <div class="preview-state hidden" id="previewState">
+                        <div class="image-preview-wrapper">
+                            <img id="selectedImagePreview" src="" alt="Selected Reference Image">
+                        </div>
+                        <div class="preview-action-row">
+                            <button id="analyzeBtn" class="btn btn-primary btn-large">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze Image
+                            </button>
+                            <button id="changeImageBtn" class="btn btn-outlined">
+                                <i class="fa-solid fa-rotate-left"></i> Change Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LOADING OVERLAY -->
+                <div class="loading-overlay hidden" id="loadingOverlay">
+                    <div class="loading-card">
+                        <div class="spinner"></div>
+                        <h3>Analyzing your image...</h3>
+                        <p>ID Chan Prompt is studying the details of your image.</p>
+                        <div class="step-indicator" id="loadingStepText">Studying facial features & pose...</div>
+                    </div>
+                </div>
+
+                <!-- RESULT SECTION -->
+                <div class="card result-card hidden" id="resultCard">
+                    <div class="result-header">
+                        <h2>Generated AI Prompt</h2>
+                        <div class="result-actions">
+                            <button id="favBtn" class="icon-btn" title="Save Favorite"><i class="fa-regular fa-heart"></i></button>
+                            <button id="shareBtn" class="icon-btn" title="Share Prompt"><i class="fa-solid fa-share-nodes"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="prompt-field-group">
+                        <div class="field-label-row">
+                            <label>Master Generated Prompt</label>
+                            <span id="charCount" class="char-count">0 chars</span>
+                        </div>
+                        <textarea id="masterPromptArea" rows="6"></textarea>
+                    </div>
+
+                    <div class="refine-chips">
+                        <span class="refine-title">Quick Refinements:</span>
+                        <button class="refine-chip" data-action="improve"><i class="fa-solid fa-sparkles"></i> Improve</button>
+                        <button class="refine-chip" data-action="more_detailed"><i class="fa-solid fa-magnifying-glass-plus"></i> More Detailed</button>
+                        <button class="refine-chip" data-action="shorter"><i class="fa-solid fa-compress"></i> Shorter</button>
+                        <button class="refine-chip" data-action="photorealistic"><i class="fa-solid fa-camera"></i> Photorealistic</button>
+                        <button class="refine-chip" data-action="cinematic"><i class="fa-solid fa-film"></i> Cinematic</button>
+                    </div>
+
+                    <div class="prompt-field-group">
+                        <label>Negative Prompt</label>
+                        <textarea id="negativePromptArea" rows="3"></textarea>
+                    </div>
+
+                    <button id="copyPromptBtn" class="btn btn-primary btn-large btn-full">
+                        <i class="fa-solid fa-copy"></i> Copy Prompt
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB 2: HISTORY -->
+            <section id="historyTab" class="tab-content">
+                <div class="tab-header">
+                    <h2>History</h2>
+                    <button id="clearHistoryBtn" class="btn btn-text-danger">Clear All</button>
+                </div>
+                <div id="historyList" class="history-list"></div>
+            </section>
+
+            <!-- TAB 3: FAVORITES -->
+            <section id="favoritesTab" class="tab-content">
+                <div class="tab-header">
+                    <h2>Favorite Prompts</h2>
+                </div>
+                <div id="favoritesList" class="history-list"></div>
+            </section>
+
+            <!-- TAB 4: SETTINGS -->
+            <section id="settingsTab" class="tab-content">
+                <div class="tab-header">
+                    <h2>Settings</h2>
+                </div>
+
+                <div class="card settings-card">
+                    <h3><i class="fa-solid fa-sliders"></i> Prompt Preferences</h3>
+                    <div class="form-group">
+                        <label>Default Prompt Mode</label>
+                        <select id="defaultModeSelect">
+                            <option value="EXACT_RECREATION">Exact Recreation</option>
+                            <option value="PHOTOREALISTIC">Photorealistic</option>
+                            <option value="CINEMATIC">Cinematic</option>
+                            <option value="DETAILED">Detailed</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Prompt Detail Level</label>
+                        <select id="detailLevelSelect">
+                            <option value="SHORT">Short</option>
+                            <option value="NORMAL">Normal</option>
+                            <option value="DETAILED" selected>Detailed</option>
+                            <option value="MAXIMUM">Maximum</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card settings-card">
+                    <h3><i class="fa-solid fa-bolt"></i> Groq API Key (Llama 3.2 Vision)</h3>
+                    <p class="settings-desc">Enter your Groq API Key (gsk_...) from console.groq.com for ultra-fast Llama 3.2 Vision inference.</p>
+                    <input type="password" id="groqApiKeyInput" placeholder="gsk_...">
+                    <button id="saveGroqApiKeyBtn" class="btn btn-primary btn-small">Save Groq Key</button>
+                </div>
+
+                <div class="card settings-card">
+                    <h3><i class="fa-solid fa-key"></i> Gemini Vision API Key</h3>
+                    <p class="settings-desc">Optional. Enter your Google Gemini API Key for direct cloud model processing.</p>
+                    <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
+                    <button id="saveApiKeyBtn" class="btn btn-primary btn-small">Save Key</button>
+                </div>
+
+                <div class="card settings-card">
+                    <h3><i class="fa-solid fa-circle-info"></i> About ID Chan Prompt</h3>
+                    <p><strong>Version:</strong> 1.0.0</p>
+                    <p>ID Chan Prompt reverses image visual characteristics into high-fidelity AI generation prompts.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- BOTTOM NAVIGATION -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-tab="homeTab">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" data-tab="historyTab">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>History</span>
+            </button>
+            <button class="nav-item" data-tab="favoritesTab">
+                <i class="fa-solid fa-heart"></i>
+                <span>Favorites</span>
+            </button>
+            <button class="nav-item" data-tab="settingsTab">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </button>
+        </nav>
+
+        <!-- TOAST NOTIFICATION -->
+        <div id="toast" class="toast hidden">Prompt copied!</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
