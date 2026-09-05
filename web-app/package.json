@@ -2,17 +2,5 @@
   "name": "id-chan-prompt",
   "version": "1.0.0",
   "description": "ID Chan Prompt - Turn any image into an exact AI prompt",
-  "scripts": {
-    "build": "echo 'Static site ready'"
-  },
-  "keywords": [
-    "ai",
-    "prompt-generator",
-    "vision",
-    "image-to-prompt",
-    "groq",
-    "gemini"
-  ],
-  "author": "ID Chan Prompt",
   "license": "MIT"
 }
